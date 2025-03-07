@@ -1,7 +1,7 @@
 describe('BarChart Component', () => {
   beforeEach(() => {
     // Visit your application's homepage where the BarChart is rendered
-    cy.visit('http://localhost:5173/bar-chart') // Adjust this URL to match your dev server
+    cy.visit('http://localhost:5173/bar-chart')
   })
 
   it('should render the BarChart component correctly', () => {
@@ -9,8 +9,11 @@ describe('BarChart Component', () => {
     cy.get('.ag-charts-canvas-container').should('exist')
     
     // Verify the chart title and subtitle using the proxy elements
-    cy.get('.ag-charts-proxy-elem svg text').first().should('have.text', "Apple's Revenue by Product Category")
-    cy.get('.ag-charts-proxy-elem svg text').eq(1).should('have.text', 'In Billion U.S. Dollars')
+    cy.get('.ag-charts-proxy-elem svg text')
+      .first()
+      .should('have.text', "Apple's Revenue by Product Category")
+    cy.get('.ag-charts-proxy-elem svg text')
+      .eq(1).should('have.text', 'In Billion U.S. Dollars')
     
     // Verify the canvas element exists (AG Charts renders on canvas)
     cy.get('.ag-charts-canvas canvas').should('exist')

@@ -14,9 +14,9 @@ function App() {
             <li>
               <Link to="/bar-chart">Bar Chart</Link>
             </li>
-            {/* <li>
+            <li>
               <Link to="/box-plot">Box Plot</Link>
-            </li> */}
+            </li>
           </ul>
         </nav>
 
