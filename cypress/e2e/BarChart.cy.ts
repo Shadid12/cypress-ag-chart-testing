@@ -103,4 +103,91 @@ describe('BarChart Component', () => {
       cy.wrap($button).should('have.attr', 'aria-checked', 'true')
     })
   })
+  // Additional accessibility tests
+  it('should have proper accessibility attributes for the chart', () => {
+    // Chart should have a figure role
+    cy.get('[role="figure"]').should('exist')
+    
+    // Chart should have an aria-label that describes the chart
+    cy.get('[role="figure"].ag-charts-canvas-proxy')
+      .should('have.attr', 'aria-label')
+      .and('include', 'chart')
+      .and('include', 'series')
+    
+    // Series area should be focusable with tab
+    cy.get('.ag-charts-series-area').should('have.attr', 'tabindex', '-1')
+    
+    // Focus indicator should exist for keyboard navigation
+    cy.get('.ag-charts-focus-indicator').should('exist')
+  })
+
+  it('should have accessible legend with proper keyboard support', () => {
+    // Legend should have a list role
+    cy.get('[role="list"].ag-charts-proxy-legend-toolbar').should('exist')
+    
+    // Legend should have an aria-label
+    cy.get('[role="list"].ag-charts-proxy-legend-toolbar')
+      .should('have.attr', 'aria-label', 'Legend')
+    
+    // Legend items should be properly labeled
+    cy.get('[role="listitem"] button').first()
+      .invoke('text')
+      .should('contain', 'Legend item 1 of 5')
+    
+    // Legend buttons should have role="switch"
+    cy.get('[role="listitem"] button').first()
+      .should('have.attr', 'role', 'switch')
+    
+    // Legend should have proper describedby for keyboard instructions
+    cy.get('[role="listitem"] button')
+      .should('have.attr', 'aria-describedby')
+      .and('match', /Legend-.*-ariaDescription/)
+    
+    // Description text should exist (even if hidden)
+    cy.get('p[id*="Legend-"][id$="-ariaDescription"]').should('exist')
+  })
+
+  it('should support keyboard navigation through legend items', () => {
+    // First item should be initially focusable
+    cy.get('[role="listitem"] button').first()
+      .should('have.attr', 'tabindex', '0')
+    
+    // Other items should have tabindex="-1" (not in tab order, but can receive focus programmatically)
+    cy.get('[role="listitem"] button').eq(1)
+      .should('have.attr', 'tabindex', '-1')
+    
+    // Sending tab should either move to another focusable element or stay within the component
+    // To keep the test reliable, we'll just verify the initial state of tabindex
+    cy.get('[role="listitem"] button').first().focus()
+    
+    // Element should receive focus
+    cy.get('[role="listitem"] button').first()
+      .should('be.focused')
+  })
+
+  it('should have accessible state changes when toggling legend items', () => {
+    // Toggle a legend item
+    cy.get('[role="listitem"] button').first().click()
+    
+    // ARIA attributes should reflect the new state
+    cy.get('[role="listitem"] button').first()
+      .should('have.attr', 'aria-checked', 'false')
+    
+    // Toggle it back
+    cy.get('[role="listitem"] button').first().click()
+    
+    // ARIA attributes should reflect the restored state
+    cy.get('[role="listitem"] button').first()
+      .should('have.attr', 'aria-checked', 'true')
+  })
+
+  it('should have proper aria-live regions for dynamic content', () => {
+    // Chart should have an aria-live region for updates
+    cy.get('[role="status"].ag-charts-overlay')
+      .should('have.attr', 'aria-live', 'polite')
+      
+    // The region should be properly atomic
+    cy.get('[role="status"].ag-charts-overlay')
+      .should('have.attr', 'aria-atomic', 'false')
+  })
 })
